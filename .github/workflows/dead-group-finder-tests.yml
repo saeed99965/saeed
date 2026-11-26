@@ -1,0 +1,25 @@
+name: tests
+on:
+  push:
+    paths:
+      - 'dead-group-finder/**'
+      - '.github/workflows/dead-group-finder-tests.yml'
+  pull_request:
+    paths:
+      - 'dead-group-finder/**'
+      - '.github/workflows/dead-group-finder-tests.yml'
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile source
+        run: python -m compileall -q dead-group-finder/src dead-group-finder/tests
+      - name: Run tests
+        working-directory: dead-group-finder
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -v
