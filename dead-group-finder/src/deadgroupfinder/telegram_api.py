@@ -28,11 +28,11 @@ class BotAPI:
   boundary='----DeadGroupFinder'+uuid.uuid4().hex
   parts=[]
   def field(name,value):
-   parts.append((f'--{boundary}\\r\\nContent-Disposition: form-data; name="{name}"\\r\\n\\r\\n{value}\\r\\n').encode())
+   parts.append((f'--{boundary}\r\nContent-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n').encode())
   field('chat_id',str(cid))
   if caption: field('caption',caption)
-  parts.append((f'--{boundary}\\r\\nContent-Disposition: form-data; name="document"; filename="{filename}"\\r\\nContent-Type: text/csv\\r\\n\\r\\n').encode())
-  parts.extend([content,f'\\r\\n--{boundary}--\\r\\n'.encode()])
+  parts.append((f'--{boundary}\r\nContent-Disposition: form-data; name="document"; filename="{filename}"\r\nContent-Type: text/csv\r\n\r\n').encode())
+  parts.extend([content,f'\r\n--{boundary}--\r\n'.encode()])
   req=urllib.request.Request(self.base+'/sendDocument',data=b''.join(parts),headers={'Content-Type':f'multipart/form-data; boundary={boundary}'},method='POST')
   try:
    with urllib.request.urlopen(req,timeout=self.timeout) as r: obj=json.loads(r.read(1_000_000))
