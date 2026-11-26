@@ -14,4 +14,4 @@ def settings():
  if not ids: raise ValueError('Set numeric OWNER_IDS in .env')
  low=int(os.getenv('MIN_INACTIVE_DAYS','2')); high=int(os.getenv('MAX_INACTIVE_DAYS','90'))
  if low<1 or high<low: raise ValueError('Invalid inactivity range')
- return {'token':token,'owners':ids,'db':os.getenv('DATABASE_PATH','data/dead_groups.sqlite3'),'timeout':int(os.getenv('REQUEST_TIMEOUT','20')),'poll':int(os.getenv('POLL_TIMEOUT','25')),'low':low,'high':high,'interval':int(os.getenv('SCAN_INTERVAL_HOURS','24'))}
+ return {'token':token,'owners':ids,'db':os.getenv('DATABASE_PATH','data/dead_groups.sqlite3'),'timeout':int(os.getenv('REQUEST_TIMEOUT','45')),'poll':int(os.getenv('POLL_TIMEOUT','25')),'low':low,'high':high,'interval':int(os.getenv('SCAN_INTERVAL_HOURS','24'))}
