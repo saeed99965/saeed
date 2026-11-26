@@ -9,7 +9,7 @@ from .telegram_api import BotAPI, TelegramError
 HELP='''Dead Group Finder 2.0\n/start /help /status /scan /discover text /addlink link /candidates /verify /tracked /report /setrange 2 90 /auto on|off /export\n\nیادآوری: فقط پیام‌های جدیدی که پس از افزودن ربات و با دسترسی لازم دریافت شوند پایش می‌شوند. تاریخچه قبلی قابل خواندن نیست.'''
 def run():
  logging.basicConfig(level=logging.INFO,format='%(asctime)s %(levelname)s %(message)s',handlers=[logging.StreamHandler(),logging.FileHandler('dead-group-finder.log',encoding='utf-8')])
- s=settings(); db=Database(s['db']); api=BotAPI(s['token'],s['timeout']); search=Discovery(s['timeout']); me=api.me(); logging.info('Bot started: @%s',me.get('username')); api.webhook_off(); offset=None
+ s=settings(); db=Database(s['db']); api=BotAPI(s['token'],s['timeout']); search=Discovery(s['timeout']); me=api.me(); logging.info('Bot started: @%s',me.get('username')); api.webhook_off(); offset=None; last_auto=0
  keywords=[x.strip() for x in Path('keywords.txt').read_text(encoding='utf-8-sig').splitlines() if x.strip() and not x.startswith('#')] if Path('keywords.txt').exists() else ['گروه چت فارسی','گروه دورهمی','گروه خنده']
  while True:
   try:
@@ -68,7 +68,7 @@ def run():
      except Exception: api.send(cid,'کاربرد: /setrange 2 90')
     elif cmd=='/auto':\n     if arg.lower() not in ('on','off'): api.send(cid,'کاربرد: /auto on یا /auto off')\n     else: db.set('auto_scan',arg.lower()); api.send(cid,'جست‌وجوی روزانه: '+arg.lower())
     elif cmd=='/export':
-     content=db.export(); api.send(cid,'خروجی CSV در دیتابیس آماده است. نسخه Bot API این build ارسال فایل را فعال نکرده؛ از فایل SQLite یا نسخه zip محلی استفاده کن.')
+     api.document(cid,'tracked_groups.csv',db.export(),'گزارش گروه‌های تحت پایش')
     else: api.send(cid,'دستور ناشناخته است. /help')
    if db.setting('auto_scan','off')=='on' and time.time()-last_auto >= s['interval']*3600:
     try:
