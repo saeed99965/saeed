@@ -66,10 +66,16 @@ def run():
       if lo<1 or hi<lo or hi>3650: raise ValueError()
       s['low'],s['high']=lo,hi; api.send(cid,f'بازه به {lo} تا {hi} روز تغییر کرد (تا اجرای مجدد برنامه).')
      except Exception: api.send(cid,'کاربرد: /setrange 2 90')
-    elif cmd=='/auto': api.send(cid,'جست‌وجوی زمان‌بندی‌شده در این نسخه با حلقه polling انجام نمی‌شود؛ برای اسکن روزانه /scan را اجرا کن یا از Task Scheduler ویندوز استفاده کن.')
+    elif cmd=='/auto':\n     if arg.lower() not in ('on','off'): api.send(cid,'کاربرد: /auto on یا /auto off')\n     else: db.set('auto_scan',arg.lower()); api.send(cid,'جست‌وجوی روزانه: '+arg.lower())
     elif cmd=='/export':
      content=db.export(); api.send(cid,'خروجی CSV در دیتابیس آماده است. نسخه Bot API این build ارسال فایل را فعال نکرده؛ از فایل SQLite یا نسخه zip محلی استفاده کن.')
     else: api.send(cid,'دستور ناشناخته است. /help')
+   if db.setting('auto_scan','off')=='on' and time.time()-last_auto >= s['interval']*3600:
+    try:
+     found=search.many(keywords)
+     for link,(parsed,title) in found.items(): db.candidate(link,parsed.public_username,title,'bing_rss')
+     last_auto=time.time(); logging.info('scheduled discovery: %s candidates',len(found))
+    except Exception: logging.exception('scheduled discovery failed'); last_auto=time.time()
   except KeyboardInterrupt: break
   except TelegramError as e: logging.warning('%s',e); time.sleep(e.retry_after or 5)
   except Exception: logging.exception('main loop error'); time.sleep(5)
