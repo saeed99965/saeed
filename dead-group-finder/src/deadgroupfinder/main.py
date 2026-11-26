@@ -66,7 +66,9 @@ def run():
       if lo<1 or hi<lo or hi>3650: raise ValueError()
       s['low'],s['high']=lo,hi; api.send(cid,f'بازه به {lo} تا {hi} روز تغییر کرد (تا اجرای مجدد برنامه).')
      except Exception: api.send(cid,'کاربرد: /setrange 2 90')
-    elif cmd=='/auto':\n     if arg.lower() not in ('on','off'): api.send(cid,'کاربرد: /auto on یا /auto off')\n     else: db.set('auto_scan',arg.lower()); api.send(cid,'جست‌وجوی روزانه: '+arg.lower())
+    elif cmd=='/auto':
+     if arg.lower() not in ('on','off'): api.send(cid,'کاربرد: /auto on یا /auto off')
+     else: db.set('auto_scan',arg.lower()); api.send(cid,'جست‌وجوی روزانه: '+arg.lower())
     elif cmd=='/export':
      api.document(cid,'tracked_groups.csv',db.export(),'گزارش گروه‌های تحت پایش')
     else: api.send(cid,'دستور ناشناخته است. /help')
